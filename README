@@ -1,0 +1,16 @@
+pyrtmidi is a Python interface to RtMidi?. It provides real-time midi input and output. 
+Original developement on http://trac2.assembla.com/pkaudio/wiki/pyrtmidi
+
+Here is a corrected version for Linux and a support for naming midi Clients and input/output ports
+
+Pass a name to a midi client:
+rtmidi.RtMidiIn("in_name")
+rtmidi.RtMidiOut("out_name")
+
+Pass a name to a midi port on your midi client (ex: midiIn/midiOut):
+midiIn.openPort(port, "in_port")
+midiOut.openPort(port, "out_port")
+
+INSTALL
+python setup.py build
+sudo python setup.py install
