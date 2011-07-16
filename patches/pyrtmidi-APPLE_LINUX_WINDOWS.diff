@@ -1,0 +1,21 @@
+--- rtmidimodule.cpp	2010-11-27 22:23:15.372724687 +0100
++++ rtmidimodule.cppNEW	2010-11-27 22:23:37.982726094 +0100
+@@ -27,11 +27,15 @@
+ #define Py_RETURN_NONE Py_INCREF(Py_None); return Py_None;
+ #endif
+ 
+-#ifndef __APPLE__
+-#define PK_WINDOWS 1
+-#else
++#ifdef __APPLE__
++#define PK_WINDOWS 0
++#endif
++#ifdef __LINUX__
+ #define PK_WINDOWS 0
+ #endif
++#ifdef __WINDOWS__
++#define PK_WINDOWS 1
++#endif
+ 
+ #if PY_MAJOR_VERSION == 3
+ #define PK_PYTHON3 1

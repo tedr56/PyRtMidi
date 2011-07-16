@@ -1,0 +1,194 @@
+--- rtmidimodule.original.cpp	2011-07-15 17:22:39.000000000 +0200
++++ rtmidimodule.cpp	2011-07-16 18:39:13.559096951 +0200
+@@ -223,21 +223,43 @@
+ static PyObject *
+ MidiIn_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+ {
++  char *name = NULL;
++
++  if(!PyArg_ParseTuple(args, "|s", &name))
++    return NULL;
++  
+   MidiIn *self;
+   self = (MidiIn *) type->tp_alloc(type, 0);
++  
+   if(self != NULL) 
+   {
+-    try
++    if (name == NULL)
+     {
+-      self->rtmidi = new RtMidiIn;
++      try
++      {
++        self->rtmidi = new RtMidiIn;
++      }
++      catch(RtError &error)
++      {
++        PyErr_SetString(RtMidiError, error.getMessageString());
++        Py_DECREF(self);
++        return NULL;
++      }
+     }
+-    catch(RtError &error)
++    else
+     {
+-      PyErr_SetString(RtMidiError, error.getMessageString());
+-      Py_DECREF(self);
+-      return NULL;
++      try
++      {
++        self->rtmidi = new RtMidiIn(name);
++      }
++      catch(RtError &error)
++      {
++        PyErr_SetString(RtMidiError, error.getMessageString());
++        Py_DECREF(self);
++        return NULL;
++      }
+     }
+-  }  
++  } 
+ 
+ #if PK_WINDOWS
+   self->mutex = CreateMutex (0, FALSE, 0);
+@@ -293,20 +315,37 @@
+ MidiIn_openPort(MidiIn *self, PyObject *args)
+ {
+   int port;
++  char *name = NULL;
+ 
+-  if(!PyArg_ParseTuple(args, "i", &port))
++  if(!PyArg_ParseTuple(args, "i|s", &port, &name))
+     return NULL;
+ 
+-  try
++  if (name == NULL)
+   {
+-    self->rtmidi->openPort(port);
++    try
++    {
++      self->rtmidi->openPort(port);
++    }
++    catch(RtError &error)
++    {
++      PyErr_SetString(RtMidiError, error.getMessageString());
++      return NULL;
++    }
+   }
+-  catch(RtError &error)
++
++  else
+   {
+-    PyErr_SetString(RtMidiError, error.getMessageString());
+-    return NULL;
++    try
++    {
++      self->rtmidi->openPort(port,name);
++    }
++    catch(RtError &error)
++    {
++      PyErr_SetString(RtMidiError, error.getMessageString());
++      return NULL;
++    }
+   }
+-  
++
+   self->rtmidi->setCallback(MidiIn_callback, self);
+   self->calling_thread_id = PyThreadState_Get()->thread_id;
+ 
+@@ -578,21 +617,42 @@
+ static PyObject *
+ MidiOut_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+ {
++  char *name = NULL;
++
++  if(!PyArg_ParseTuple(args, "|s", &name))
++    return NULL;
++
+   MidiOut *self;
+   self = (MidiOut *) type->tp_alloc(type, 0);
+   if(self != NULL) 
+   {
+-    try
++    if (name == NULL)
+     {
+-      self->rtmidi = new RtMidiOut;
++      try
++      {
++        self->rtmidi = new RtMidiOut;
++      }
++      catch(RtError &error)
++      {
++        PyErr_SetString(RtMidiError, error.getMessageString());
++        Py_DECREF(self);
++        return NULL;
++      }
+     }
+-    catch(RtError &error)
++    else
+     {
+-      PyErr_SetString(RtMidiError, error.getMessageString());
+-      Py_DECREF(self);
+-      return NULL;
++      try
++      {
++        self->rtmidi = new RtMidiOut(name);
++      }
++      catch(RtError &error)
++      {
++        PyErr_SetString(RtMidiError, error.getMessageString());
++        Py_DECREF(self);
++        return NULL;
++      }
+     }
+-  }
++  }    
+   return (PyObject *) self;
+ }
+ 
+@@ -607,20 +667,33 @@
+ MidiOut_openPort(MidiOut *self, PyObject *args)
+ {
+   int port = 0;
+-  
+-  if(!PyArg_ParseTuple(args, "|i", &port))
++  char *name = NULL;
++
++  if(!PyArg_ParseTuple(args, "i|s", &port, &name))
+     return NULL;
+-  
+-  try
+-  {
+-    self->rtmidi->openPort(port);
+-  }
+-  catch(RtError &error)
++
++  if (name == NULL)
++    try
++    {
++      self->rtmidi->openPort(port);
++    }
++    catch(RtError &error)
++    {
++      PyErr_SetString(RtMidiError, error.getMessageString());
++      return NULL;
++    }
++  else
+   {
+-    PyErr_SetString(RtMidiError, error.getMessageString());
+-    return NULL;
+-  }
+-  
++    try
++    {
++      self->rtmidi->openPort(port,name);
++    }
++    catch(RtError &error)
++    {
++      PyErr_SetString(RtMidiError, error.getMessageString());
++      return NULL;
++    }
++  }  
+   Py_INCREF(Py_None);
+   return Py_None;
+ }
