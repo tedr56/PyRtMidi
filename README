@@ -11,6 +11,8 @@ Pass a name to a midi port on your midi client (ex: midiIn/midiOut):
 midiIn.openPort(port, "in_port")
 midiOut.openPort(port, "out_port")
 
+Fix the noteOn MidiMessage creation
+
 INSTALL
 python setup.py build
 sudo python setup.py install
