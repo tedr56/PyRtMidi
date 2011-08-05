@@ -523,19 +523,19 @@ const MidiMessage MidiMessage::noteOn (const int channel,
                                        const int noteNumber,
                                        const float velocity) throw()
 {
-    return noteOn (channel, noteNumber, (uint8)(velocity * 127.0f));
+    return noteOn (channel, noteNumber, (int)(velocity * 127.0f));
 }
 
 const MidiMessage MidiMessage::noteOn (const int channel,
                                        const int noteNumber,
-                                       const uint8 velocity) throw()
+                                       const int velocity) throw()
 {
     pkassert (channel > 0 && channel <= 16);
     pkassert (((unsigned int) noteNumber) <= 127);
 
     return MidiMessage (0x90 | pklimit (0, 15, channel - 1),
                         noteNumber & 127,
-                        pklimit (0, 127, roundFloatToInt (velocity)));
+                        pklimit (0, 127, velocity));
 }
 
 const MidiMessage MidiMessage::noteOff (const int channel,

@@ -324,8 +324,8 @@ PyMidiMessage_noteOn(PyMidiMessage *, PyObject *args)
 {
   int channel = -1;
   int noteNumber = -1;
-  uint8 velocity = -1;
-  if(!PyArg_ParseTuple(args, "iiH", &channel, &noteNumber, &velocity))
+  int velocity = -1;
+  if(!PyArg_ParseTuple(args, "iii", &channel, &noteNumber, &velocity))
     return NULL;
   
   return PyMidiMessage_FromMidiMessage(MidiMessage::noteOn(channel, noteNumber, velocity));

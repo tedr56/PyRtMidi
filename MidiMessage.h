@@ -220,7 +220,7 @@ public:
     */
     static const MidiMessage noteOn (const int channel,
                                      const int noteNumber,
-                                     const uint8 velocity) throw();
+                                     const int velocity) throw();
 
     /** Returns true if this message is a 'key-up' event.
 
